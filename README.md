@@ -45,7 +45,7 @@ forge/
 
 ## Quick start (universal)
 
-1. Obtain `dist/forge-skill.zip`.
+1. Obtain `forge-skill.zip`.
 2. Import / install according to your chatbot or agent’s skill mechanism (usually extract so that `SKILL.md` is discoverable).
 3. Invoke the skill on coding, debugging, or verification tasks.
 4. Shared state is written to `.forge/state.json` in the project.
