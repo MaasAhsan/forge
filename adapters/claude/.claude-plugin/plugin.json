@@ -1,0 +1,8 @@
+{
+  "name": "forge",
+  "description": "Correctness-first multi-agent coding skill. Write the right code for the actual current environment.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Forge"
+  }
+}

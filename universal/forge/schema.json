@@ -1,0 +1,281 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://forge-skill.dev/schema/v1/forge.json",
+  "title": "Forge Shared State",
+  "description": "Portable multi-agent coding state focused on environment correctness, verification, and evidence-based work. Platform-independent.",
+  "type": "object",
+  "required": ["schema_version", "task_id", "updated_at", "goal", "mode", "current_state", "provenance"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "task_id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" },
+    "updated_by": { "type": "string" },
+    "goal": { "type": "string" },
+    "mode": {
+      "type": "string",
+      "enum": ["BUILD", "DEBUG", "VERIFY", "UPDATE", "HANDOFF"]
+    },
+    "constraints": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "decisions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/decision" }
+    },
+    "current_state": { "type": "string" },
+    "completed": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "in_progress": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "blocked": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/blocked_item" }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "important_files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string" },
+          "role": { "type": "string" },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "known_issues": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "environment": {
+      "type": "object",
+      "description": "Actual project environment as verified",
+      "properties": {
+        "language": { "type": "string" },
+        "runtime": { "type": "string" },
+        "framework": { "type": "string" },
+        "declared_versions": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "installed_versions": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "package_manager": { "type": "string" },
+        "lockfile": { "type": "string" },
+        "notes": { "type": "string" },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    },
+    "verification": {
+      "type": "object",
+      "properties": {
+        "checked": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "url_or_path": { "type": "string" },
+              "what": { "type": "string" },
+              "version": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["VERIFIED", "LIKELY", "POSSIBLE", "UNVERIFIED", "CONFLICT"]
+              }
+            }
+          }
+        },
+        "confirmed": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "uncertain": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "status": {
+          "type": "string",
+          "enum": ["VERIFIED", "LIKELY", "POSSIBLE", "UNVERIFIED", "FAILED"]
+        }
+      }
+    },
+    "assumptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "text", "status", "provenance"],
+        "properties": {
+          "id": { "type": "string" },
+          "text": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "INVALIDATED", "SUPERSEDED", "CONFIRMED"]
+          },
+          "provenance": { "$ref": "#/$defs/provenance" },
+          "supersedes": { "type": "string" },
+          "evidence": { "type": "string" }
+        }
+      }
+    },
+    "files_changed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string" },
+          "action": { "type": "string", "enum": ["created", "modified", "deleted"] },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "testing": {
+      "type": "object",
+      "properties": {
+        "commands": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "command": { "type": "string" },
+              "outcome": { "type": "string" },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "next_action": { "type": "string" },
+    "history": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/history_event" }
+    },
+    "provenance": { "$ref": "#/$defs/provenance" },
+    "handoff": {
+      "type": "object",
+      "properties": {
+        "from_agent": { "type": "string" },
+        "to_agent": { "type": "string" },
+        "summary": { "type": "string" },
+        "critical_context": { "type": "string" },
+        "do_not_revisit": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "verified_facts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "remaining_risks": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "provenance": {
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": {
+          "type": "string",
+          "enum": ["USER_PROVIDED", "VERIFIED", "INFERRED", "ASSUMED", "UNKNOWN"]
+        },
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "evidence": { "type": "string" },
+        "checked_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "entry": {
+      "type": "object",
+      "required": ["id", "text", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "DONE", "SUPERSEDED", "INVALIDATED", "STALE"]
+        },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "supersedes": { "type": "string" }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["id", "text", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "rationale": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "SUPERSEDED", "INVALIDATED"]
+        },
+        "provenance": { "$ref": "#/$defs/provenance" },
+        "supersedes": { "type": "string" }
+      }
+    },
+    "blocked_item": {
+      "type": "object",
+      "required": ["id", "text", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "text": { "type": "string" },
+        "blocker": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["ACTIVE", "RESOLVED", "SUPERSEDED"]
+        },
+        "provenance": { "$ref": "#/$defs/provenance" }
+      }
+    },
+    "history_event": {
+      "type": "object",
+      "required": ["timestamp", "type", "summary"],
+      "properties": {
+        "timestamp": { "type": "string", "format": "date-time" },
+        "type": {
+          "type": "string",
+          "enum": [
+            "STATE_UPDATE",
+            "DECISION_CHANGED",
+            "CONFLICT_DETECTED",
+            "ASSUMPTION_INVALIDATED",
+            "VERIFICATION_PASSED",
+            "VERIFICATION_FAILED",
+            "PLAN_INVALIDATED",
+            "STALE_CONTEXT",
+            "ENVIRONMENT_UPDATED",
+            "HANDOFF",
+            "MODE_CHANGE"
+          ]
+        },
+        "summary": { "type": "string" },
+        "details": { "type": "string" },
+        "agent": { "type": "string" }
+      }
+    }
+  }
+}

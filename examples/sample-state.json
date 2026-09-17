@@ -1,0 +1,98 @@
+{
+  "schema_version": "1.0.0",
+  "task_id": "feat-auth-refresh-001",
+  "created_at": "2026-09-17T02:00:00Z",
+  "updated_at": "2026-09-17T03:15:00Z",
+  "updated_by": "agent-a",
+  "goal": "Add token refresh flow compatible with the project's current auth library version",
+  "mode": "BUILD",
+  "current_state": "Environment verified. Auth library is v3.2.1 (lockfile). Official docs for v3.x consulted. Minimal refresh helper implemented; unit tests pending.",
+  "environment": {
+    "language": "TypeScript",
+    "runtime": "Node 20",
+    "framework": "Next.js 14",
+    "declared_versions": {
+      "next": "^14.2.0",
+      "auth-lib": "^3.2.0"
+    },
+    "installed_versions": {
+      "next": "14.2.5",
+      "auth-lib": "3.2.1"
+    },
+    "package_manager": "pnpm",
+    "lockfile": "pnpm-lock.yaml",
+    "provenance": {
+      "source": "VERIFIED",
+      "evidence": "pnpm-lock.yaml + node_modules/auth-lib/package.json",
+      "checked_at": "2026-09-17T02:10:00Z"
+    }
+  },
+  "verification": {
+    "checked": ["auth-lib refresh API", "Next.js App Router conventions"],
+    "sources": [
+      {
+        "url_or_path": "https://auth-lib.example/docs/v3/refresh",
+        "what": "refreshToken method signature",
+        "version": "3.x",
+        "status": "VERIFIED"
+      }
+    ],
+    "confirmed": ["refreshToken exists and returns Promise<TokenPair>"],
+    "uncertain": [],
+    "status": "VERIFIED"
+  },
+  "assumptions": [],
+  "completed": [
+    {
+      "id": "c1",
+      "text": "Inspected lockfile and confirmed auth-lib 3.2.1",
+      "status": "DONE",
+      "provenance": { "source": "VERIFIED" }
+    }
+  ],
+  "in_progress": [
+    {
+      "id": "i1",
+      "text": "Write unit tests for refresh helper",
+      "status": "ACTIVE"
+    }
+  ],
+  "next_action": "Add unit tests for the refresh helper and run the existing test suite",
+  "files_changed": [
+    {
+      "path": "src/lib/auth/refresh.ts",
+      "action": "created",
+      "reason": "Minimal refresh helper using verified v3 API"
+    }
+  ],
+  "testing": {
+    "commands": [],
+    "results": []
+  },
+  "history": [
+    {
+      "timestamp": "2026-09-17T02:10:00Z",
+      "type": "ENVIRONMENT_UPDATED",
+      "summary": "Verified auth-lib 3.2.1 from lockfile",
+      "agent": "agent-a"
+    },
+    {
+      "timestamp": "2026-09-17T03:00:00Z",
+      "type": "STATE_UPDATE",
+      "summary": "Implemented refresh helper",
+      "agent": "agent-a"
+    }
+  ],
+  "provenance": {
+    "source": "VERIFIED"
+  },
+  "handoff": {
+    "from_agent": "agent-a",
+    "to_agent": "any",
+    "summary": "Refresh helper created for auth-lib v3.2.1. Tests still needed.",
+    "critical_context": "Do not use the v2 refresh API; project is on v3.",
+    "do_not_revisit": ["auth-lib version detection"],
+    "verified_facts": ["auth-lib==3.2.1", "refreshToken returns Promise<TokenPair>"],
+    "remaining_risks": ["No runtime integration test yet"]
+  }
+}
